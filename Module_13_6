@@ -1,13 +1,14 @@
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.dispatcher import FSMContext
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import asyncio
 
 
 
-api = ''
+api = '7269628965:AAH2Et-1chdUtKhxHctaTdXkBxEhCuYwjpo'
 bot = Bot(token=api)
 dp = Dispatcher(bot, storage = MemoryStorage())
 
@@ -25,7 +26,7 @@ menu = ReplyKeyboardMarkup(keyboard=[
 in_kb = InlineKeyboardMarkup()
 button_rkn = InlineKeyboardButton(text= 'Рассчитать норму калорий', callback_data= 'calories')
 button_fc = InlineKeyboardButton(text= 'Формула расчёта', callback_data= 'formulas')
-in_kb.row(button_rkn,button_info)
+in_kb.row(button_rkn,button_fc)
 
 
 
