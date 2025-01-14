@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
-api = '7269628965:AAH2Et-1chdUtKhxHctaTdXkBxEhCuYwjpo'
+api = ''
 bot = Bot(token=api)
 dp = Dispatcher(bot, storage = MemoryStorage())
 
@@ -76,11 +76,12 @@ async def set_weight_w(message, state):
 
 @dp.message_handler(state= UserState.weight)
 async def send_calories_w(message, state):
+
     try:
         await state.update_data(weight=message.text)
         data = await state.get_data()
         cal = 10*int(data['weight']) + 6.25*int(data['growth']) - 5*int(data['age']) - 161
-        await message.answer(f'Ваше необходимое количество ккал: {cal}')
+        await message.answer(f'{message.from_user.first_name} ваше необходимое количество ккал: {cal}')
     except ValueError:
         await message.answer('Данные не верны.\n'
          'Нажмите "Рассчитать" и введите данные снова.')
@@ -117,7 +118,7 @@ async def send_calories_m(message, state):
         await state.update_data(weight=message.text)
         data = await state.get_data()
         cal = 10 * int(data['weight']) + 6.25 * int(data['growth']) - 5 * int(data['age']) + 5
-        await message.answer(f'Ваше необходимое количество ккал: {cal}')
+        await message.answer(f'{message.from_user.first_name} ваше необходимое количество ккал: {cal}')
     except ValueError:
         await message.answer('Данные не верны.\n'
                              'Нажмите "Рассчитать" и введите данные снова.')
