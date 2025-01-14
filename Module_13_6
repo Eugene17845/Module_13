@@ -1,13 +1,10 @@
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.dispatcher import FSMContext
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import asyncio
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
-
-api = ''
+api = '7269628965:AAH2Et-1chdUtKhxHctaTdXkBxEhCuYwjpo'
 bot = Bot(token=api)
 dp = Dispatcher(bot, storage = MemoryStorage())
 
@@ -43,8 +40,8 @@ async def formulas_choice(call):
 @dp.callback_query_handler(text= 'formulas')
 async def get_formulas(call):
     await call.message.answer(
-        'Формула Миффлина-Сан Жеора для мужчин: 10 х вес (кг) + 6,25 x рост (см) – 5 х возраст (г) + 5',
-        'Формула Миффлина-Сан Жеора для женщин: 10 х вес (кг) + 6,25 x рост (см) – 5 х возраст (г) - 161')
+        '• Формула Миффлина-Сан Жеора для мужчин: 10 х вес (кг) + 6,25 x рост (см) – 5 х возраст (г) + 5\n'
+        '• Формула Миффлина-Сан Жеора для женщин: 10 х вес (кг) + 6,25 x рост (см) – 5 х возраст (г) - 161')
     await call.answer()
 
 #Расчет калорий -----------------------------------------------------------------------
@@ -55,14 +52,14 @@ class UserState(StatesGroup):
 
 #Для женщин---------------------------------------------------------------------------
 @dp.callback_query_handler(text= 'women')
-async def set_age(call):
+async def set_age_w(call):
     print('Введите свой возраст:')
     await call.message.answer('Введите свой возраст:')
     await UserState.age.set()
     await call.answer()
 
 @dp.message_handler(state= UserState.age)
-async def set_group(message, state):
+async def set_group_w(message, state):
     await state.update_data(age = message.text)
     data = await state.get_data()
     print('Введите свой рост:')
@@ -70,7 +67,7 @@ async def set_group(message, state):
     await UserState.growth.set()
 
 @dp.message_handler(state= UserState.growth)
-async def set_weight(message, state):
+async def set_weight_w(message, state):
     await state.update_data(growth= message.text)
     data = await state.get_data()
     print('Введите свой вес:')
@@ -78,24 +75,28 @@ async def set_weight(message, state):
     await UserState.weight.set()
 
 @dp.message_handler(state= UserState.weight)
-async def send_calories(message, state):
-    await state.update_data(weight=message.text)
-    data = await state.get_data()
-    cal = 10*int(data['weight']) + 6.25*int(data['growth']) - 5*int(data['age']) - 161
-    await message.answer(f'Ваше необходимое количество ккал: {cal}')
+async def send_calories_w(message, state):
+    try:
+        await state.update_data(weight=message.text)
+        data = await state.get_data()
+        cal = 10*int(data['weight']) + 6.25*int(data['growth']) - 5*int(data['age']) - 161
+        await message.answer(f'Ваше необходимое количество ккал: {cal}')
+    except ValueError:
+        await message.answer('Данные не верны.\n'
+         'Нажмите "Рассчитать" и введите данные снова.')
 
     await state.finish()
 
 #Для Мужчин---------------------------------------------------------------------------
 @dp.callback_query_handler(text= 'men')
-async def set_age(call):
+async def set_age_m(call):
     print('Введите свой возраст:')
     await call.message.answer('Введите свой возраст:')
     await UserState.age.set()
     await call.answer()
 
 @dp.message_handler(state= UserState.age)
-async def set_group(message, state):
+async def set_group_m(message, state):
     await state.update_data(age = message.text)
     data = await state.get_data()
     print('Введите свой рост:')
@@ -103,7 +104,7 @@ async def set_group(message, state):
     await UserState.growth.set()
 
 @dp.message_handler(state= UserState.growth)
-async def set_weight(message, state):
+async def set_weight_m(message, state):
     await state.update_data(growth= message.text)
     data = await state.get_data()
     print('Введите свой вес:')
@@ -111,11 +112,15 @@ async def set_weight(message, state):
     await UserState.weight.set()
 
 @dp.message_handler(state= UserState.weight)
-async def send_calories(message, state):
-    await state.update_data(weight=message.text)
-    data = await state.get_data()
-    cal = 10*int(data['weight']) + 6.25*int(data['growth']) - 5*int(data['age']) + 5
-    await message.answer(f'Ваше необходимое количество ккал: {cal}')
+async def send_calories_m(message, state):
+    try:
+        await state.update_data(weight=message.text)
+        data = await state.get_data()
+        cal = 10 * int(data['weight']) + 6.25 * int(data['growth']) - 5 * int(data['age']) + 5
+        await message.answer(f'Ваше необходимое количество ккал: {cal}')
+    except ValueError:
+        await message.answer('Данные не верны.\n'
+                             'Нажмите "Рассчитать" и введите данные снова.')
 
     await state.finish()
 #----------------------------------------------------------------------------------------
