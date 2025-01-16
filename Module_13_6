@@ -3,8 +3,9 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.dispatcher import FSMContext
 
-api = ''
+api = '7269628965:AAH2Et-1chdUtKhxHctaTdXkBxEhCuYwjpo'
 bot = Bot(token=api)
 dp = Dispatcher(bot, storage = MemoryStorage())
 
@@ -45,38 +46,38 @@ async def get_formulas(call):
     await call.answer()
 
 #Расчет калорий -----------------------------------------------------------------------
-class UserState(StatesGroup):
+#Для женщин---------------------------------------------------------------------------
+class UserStateW(StatesGroup):
     age = State()
     growth = State()
     weight = State()
 
-#Для женщин---------------------------------------------------------------------------
 @dp.callback_query_handler(text= 'women')
 async def set_age_w(call):
     print('Введите свой возраст:')
     await call.message.answer('Введите свой возраст:')
-    await UserState.age.set()
+    await UserStateW.age.set()
     await call.answer()
 
-@dp.message_handler(state= UserState.age)
+@dp.message_handler(state= UserStateW.age)
 async def set_group_w(message, state):
     await state.update_data(age = message.text)
     data = await state.get_data()
+
     print('Введите свой рост:')
     await message.answer('Введите свой рост:')
-    await UserState.growth.set()
+    await UserStateW.growth.set()
 
-@dp.message_handler(state= UserState.growth)
+@dp.message_handler(state= UserStateW.growth)
 async def set_weight_w(message, state):
     await state.update_data(growth= message.text)
     data = await state.get_data()
     print('Введите свой вес:')
     await message.answer('Введите свой вес:')
-    await UserState.weight.set()
+    await UserStateW.weight.set()
 
-@dp.message_handler(state= UserState.weight)
+@dp.message_handler(state= UserStateW.weight)
 async def send_calories_w(message, state):
-
     try:
         await state.update_data(weight=message.text)
         data = await state.get_data()
@@ -89,30 +90,35 @@ async def send_calories_w(message, state):
     await state.finish()
 
 #Для Мужчин---------------------------------------------------------------------------
+class UserStateM(StatesGroup):
+    age = State()
+    growth = State()
+    weight = State()
+
 @dp.callback_query_handler(text= 'men')
 async def set_age_m(call):
     print('Введите свой возраст:')
     await call.message.answer('Введите свой возраст:')
-    await UserState.age.set()
+    await UserStateM.age.set()
     await call.answer()
 
-@dp.message_handler(state= UserState.age)
+@dp.message_handler(state= UserStateM.age)
 async def set_group_m(message, state):
     await state.update_data(age = message.text)
     data = await state.get_data()
     print('Введите свой рост:')
     await message.answer('Введите свой рост:')
-    await UserState.growth.set()
+    await UserStateM.growth.set()
 
-@dp.message_handler(state= UserState.growth)
+@dp.message_handler(state= UserStateM.growth)
 async def set_weight_m(message, state):
     await state.update_data(growth= message.text)
     data = await state.get_data()
     print('Введите свой вес:')
     await message.answer('Введите свой вес:')
-    await UserState.weight.set()
+    await UserStateM.weight.set()
 
-@dp.message_handler(state= UserState.weight)
+@dp.message_handler(state= UserStateM.weight)
 async def send_calories_m(message, state):
     try:
         await state.update_data(weight=message.text)
